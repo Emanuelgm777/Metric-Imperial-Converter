@@ -6,37 +6,44 @@ const cors = require('cors');
 
 // Rutas
 const apiRoutes = require('./routes/api.js');
+const apiTestRoutes = require('./routes/_api.js'); // runner FCC (/_api/*)
 
-// App
 const app = express();
 
-// Middleware básico
-app.use(cors({ optionsSuccessStatus: 200 })); // FCC tests friendly
+// Exporta app de inmediato (rompe ciclos)
+module.exports = app;
+
+// Middlewares
+app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Servir estáticos (index.html y /public si existen)
+// Estáticos + vista
 app.use('/public', express.static(path.join(__dirname, 'public')));
-
-// Ruta raíz (sirve index.html del boilerplate si está presente)
-app.get('/', function (req, res) {
+app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
 });
 
-// API
+// ✅ 1) Monta tu API primero
 apiRoutes(app);
 
+// ✅ 2) Luego monta el runner (se programará en el siguiente tick)
+apiTestRoutes(app);
+
 // 404
-app.use(function (req, res) {
+app.use((req, res) => {
   res.status(404).type('text').send('Not Found');
 });
 
-// Exportar app para los tests
-module.exports = app;
-
-// Levantar servidor sólo si se ejecuta directamente (no en tests)
+// Levantar sólo si es entrypoint
 if (require.main === module) {
-  const listener = app.listen(process.env.PORT || 3000, () => {
-    console.log('Server running on port ' + listener.address().port);
+  const port = process.env.PORT || 3000;
+  const listener = app.listen(port, () => {
+    try {
+      const addr = listener.address();
+      console.log('Server running on port ' + (addr && addr.port ? addr.port : port));
+    } catch {
+      console.log('Server running on port ' + port);
+    }
   });
 }
