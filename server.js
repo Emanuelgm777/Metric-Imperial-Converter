@@ -13,7 +13,7 @@ app.use(cors({ optionsSuccessStatus: 200 }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Estáticos + vista
+// estáticos + vista raíz (opcional)
 app.use('/public', express.static(path.join(__dirname, 'public')));
 app.get('/', (req, res) => {
   res.sendFile(path.join(__dirname, 'views', 'index.html'));
@@ -22,9 +22,9 @@ app.get('/', (req, res) => {
 // ✅ MONTA PRIMERO /api/convert
 apiRoutes(app);
 
-// ✅ Runner FCC SOLO si está habilitado por env var (producción: Railway/FCC)
+// ✅ Runner FCC SOLO si está habilitado en prod (Railway)
 if (process.env.FCC_RUNNER === 'true') {
-  const apiTestRoutes = require('./routes/_api.js'); // expone /_api/get-tests y otros
+  const apiTestRoutes = require('./routes/_api.js'); // expone /_api/*
   apiTestRoutes(app);
 }
 
@@ -33,7 +33,7 @@ app.use((req, res) => {
   res.status(404).type('text').send('Not Found');
 });
 
-// Levanta sólo si es entrypoint
+// Levanta solo si es entrypoint
 if (require.main === module) {
   const port = process.env.PORT || 3000;
   const listener = app.listen(port, () => {

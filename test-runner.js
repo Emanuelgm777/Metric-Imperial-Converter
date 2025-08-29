@@ -1,28 +1,20 @@
 'use strict';
 const Mocha = require('mocha');
 
-/**
- * Estado interno del runner
- */
 let state = {
   started: false,
   finished: false,
   stats: null,
-  tests: [],    // <- FCC lee un ARRAY desde /_api/get-tests
+  tests: [],   // FCC lee este ARRAY desde /_api/get-tests
   passes: [],
   failures: [],
 };
 
-/**
- * Ejecuta Mocha una sola vez (idempotente)
- */
 function run() {
   if (state.started) return;
   state.started = true;
 
   const mocha = new Mocha({ ui: 'tdd', timeout: 5000 });
-
-  // Archivos de test del proyecto FCC
   mocha.addFile('./tests/1_unit-tests.js');
   mocha.addFile('./tests/2_functional-tests.js');
 
@@ -30,14 +22,13 @@ function run() {
 
   runner
     .on('test end', (test) => {
-      // FCC filtra por "context": 'Unit Tests' o 'Functional Tests'
       const context = (test.parent && test.parent.title) || '';
       state.tests.push({
         title: test.title,
         fullTitle: test.fullTitle && test.fullTitle(),
         duration: test.duration,
-        state: test.state, // 'passed' / 'failed' (si aplica)
-        context,           // <- CLAVE para que FCC cuente 16 y 5
+        state: test.state, // 'passed'/'failed'
+        context,           // 'Unit Tests' / 'Functional Tests'
       });
     })
     .on('pass', (test) => {
@@ -60,16 +51,10 @@ function run() {
     });
 }
 
-/**
- * Lo que FCC consume en /_api/get-tests
- */
 function getTestsArray() {
   return state.tests;
 }
 
-/**
- * Estado general opcional (/_api/get-status)
- */
 function getStatus() {
   return {
     started: state.started,
