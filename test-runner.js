@@ -5,7 +5,7 @@ let state = {
   started: false,
   finished: false,
   stats: null,
-  tests: [],   // FCC lee este ARRAY desde /_api/get-tests
+  tests: [],
   passes: [],
   failures: [],
 };
@@ -21,47 +21,45 @@ function run() {
   const runner = mocha.run();
 
   runner
-    .on('test end', (test) => {
-      const context = (test.parent && test.parent.title) || '';
-      state.tests.push({
-        title: test.title,
-        fullTitle: test.fullTitle && test.fullTitle(),
-        duration: test.duration,
-        state: test.state, // 'passed'/'failed'
-        context,           // 'Unit Tests' / 'Functional Tests'
-      });
-    })
     .on('pass', (test) => {
-      state.passes.push({
+      const context = (test.parent && test.parent.title) || '';
+      const item = {
         title: test.title,
         fullTitle: test.fullTitle && test.fullTitle(),
         duration: test.duration,
-      });
+        state: 'passed',
+        context
+      };
+      state.tests.push(item);
+      state.passes.push(item);
     })
     .on('fail', (test, err) => {
-      state.failures.push({
+      const context = (test.parent && test.parent.title) || '';
+      const item = {
         title: test.title,
         fullTitle: test.fullTitle && test.fullTitle(),
-        error: err && (err.message || String(err)),
-      });
+        duration: test.duration,
+        state: 'failed',
+        context,
+        error: err && (err.message || String(err))
+      };
+      state.tests.push(item);
+      state.failures.push(item);
     })
     .on('end', function () {
       state.finished = true;
-      state.stats = this.stats; // { tests, passes, failures, duration }
+      state.stats = this.stats;
     });
 }
 
-function getTestsArray() {
-  return state.tests;
-}
-
+function getTestsArray() { return state.tests; }
 function getStatus() {
   return {
     started: state.started,
     finished: state.finished,
     stats: state.stats,
     passes: state.passes,
-    failures: state.failures,
+    failures: state.failures
   };
 }
 
