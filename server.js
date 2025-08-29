@@ -41,3 +41,13 @@ if (require.main === module) {
     console.log('Server running on port ' + (addr && addr.port ? addr.port : port));
   });
 }
+
+// --- DEBUG: siempre disponible ---
+app.get('/debug-env', (req, res) => {
+  res.json({
+    FCC_RUNNER: process.env.FCC_RUNNER || null,
+    NODE_ENV: process.env.NODE_ENV || null,
+    PORT: process.env.PORT || null,
+    now: Date.now()
+  });
+});
