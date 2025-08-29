@@ -1,40 +1,14 @@
 'use strict';
-
-const ConvertHandler = require('../controllers/convertHandler.js');
+const runner = require('../test-runner');
 
 module.exports = function (app) {
-  const convertHandler = new ConvertHandler();
+  runner.run();
 
-  // Endpoint: GET /api/convert?input=10L
-  app.get('/api/convert', (req, res) => {
-    const input = (req.query.input || '').toString();
+  app.get('/_api/get-tests', (req, res) => {
+    res.json(runner.getResults());
+  });
 
-    const initNum = convertHandler.getNum(input);
-    const initUnit = convertHandler.getUnit(input);
-
-    const numInvalid = initNum === 'invalid number';
-    const unitInvalid = initUnit === 'invalid unit';
-
-    if (numInvalid && unitInvalid) {
-      return res.status(200).type('text').send('invalid number and unit');
-    }
-    if (numInvalid) {
-      return res.status(200).type('text').send('invalid number');
-    }
-    if (unitInvalid) {
-      return res.status(200).type('text').send('invalid unit');
-    }
-
-    const returnUnit = convertHandler.getReturnUnit(initUnit);
-    const returnNum = convertHandler.convert(initNum, initUnit);
-    const string = convertHandler.getString(initNum, initUnit, returnNum, returnUnit);
-
-    return res.json({
-      initNum,
-      initUnit,
-      returnNum,
-      returnUnit,
-      string,
-    });
+  app.get('/_api/health', (req, res) => {
+    res.json({ ok: true, ts: Date.now() });
   });
 };
