@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Metric-Imperial Converter</title>
+  <link rel="stylesheet" href="/public/style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Metric ↔ Imperial Converter</h1>
+    <form id="convert-form">
+      <label for="input">Input</label>
+      <input id="input" name="input" type="text" placeholder="e.g., 10L, 3/4mi, 5.5kg" required />
+      <button type="submit">Convert</button>
+    </form>
+
+    <div id="result" class="card hidden">
+      <h2>Result</h2>
+      <pre id="json"></pre>
+    </div>
+
+    <div class="examples">
+      <h3>Try:</h3>
+      <ul>
+        <li><button class="example" data-val="10L">10L</button></li>
+        <li><button class="example" data-val="3/7mi">3/7mi</button></li>
+        <li><button class="example" data-val="32g">32g (invalid unit)</button></li>
+        <li><button class="example" data-val="3/7.2/4kg">3/7.2/4kg (invalid number)</button></li>
+        <li><button class="example" data-val="kg">kg (defaults to 1)</button></li>
+      </ul>
+    </div>
+  </div>
+
+  <script src="/public/script.js"></script>
+</body>
+</html>
