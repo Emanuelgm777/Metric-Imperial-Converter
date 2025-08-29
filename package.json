@@ -8,13 +8,11 @@
     "test": "mocha \"tests/**/*.js\" --ui tdd --timeout 5000 --exit"
   },
   "dependencies": {
+    "chai": "^4.3.10",
+    "chai-http": "^4.3.0",
     "cors": "^2.8.5",
     "express": "^4.18.2",
-    "helmet": "^6.0.1"
-  },
-  "devDependencies": {
-    "mocha": "^10.2.0",
-    "chai": "^4.3.10",
-    "chai-http": "^4.3.0"
+    "helmet": "^6.0.1",
+    "mocha": "^10.2.0"
   }
 }
